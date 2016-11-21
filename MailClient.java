@@ -11,6 +11,12 @@ public class MailClient
     private MailServer server;
     // The user running this client.
     private String user;
+    
+    private boolean sendAutoMsg;
+    
+    private String autoMsg;
+    
+    private String subject;
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -19,6 +25,7 @@ public class MailClient
     {
         this.server = server;
         this.user = user;
+        sendAutoMsg = false;
     }
 
     /**
@@ -26,6 +33,11 @@ public class MailClient
      */
     public MailItem getNextMailItem()
     {
+        if (sendAutoMsg == true)
+        {
+            MailItem userFrom = server.getNextMailItem(user);
+            sendMailItem(userFrom.getFrom(), subject, autoMsg);
+        }
         return server.getNextMailItem(user);
     }
 
@@ -59,5 +71,12 @@ public class MailClient
     public void numberOfMails()
     {
         System.out.println(server.howManyMailItems(user));
+    }
+    
+    public void vacationMode(boolean setVacationMode, String newAutoMsg, String newSubject)
+    {
+        sendAutoMsg = setVacationMode;
+        autoMsg = newAutoMsg;
+        subject = newSubject;
     }
 }
