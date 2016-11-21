@@ -26,6 +26,8 @@ public class MailClient
         this.server = server;
         this.user = user;
         sendAutoMsg = false;
+        autoMsg = "Estoy de vacaciones";
+        subject = "Vacaciones";        
     }
 
     /**
@@ -73,9 +75,13 @@ public class MailClient
         System.out.println(server.howManyMailItems(user));
     }
     
-    public void vacationMode(boolean setVacationMode, String newAutoMsg, String newSubject)
+    public void vacationMode(boolean setVacationMode)
     {
         sendAutoMsg = setVacationMode;
+    }
+    
+    public void modifyAutoMsg(String newAutoMsg, String newSubject)
+    {
         autoMsg = newAutoMsg;
         subject = newSubject;
     }
