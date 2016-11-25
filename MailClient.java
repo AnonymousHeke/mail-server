@@ -18,6 +18,8 @@ public class MailClient
     
     private String subject;
 
+    private MailItem lastMail;
+    
     /**
      * Create a mail client run by user and attached to the given server.
      */
@@ -35,12 +37,13 @@ public class MailClient
      */
     public MailItem getNextMailItem()
     {
-        if (sendAutoMsg == true)
+        MailItem item = server.getNextMailItem(user);       
+        lastMail = item;
+        if (sendAutoMsg && item != null)
         {
-            MailItem userFrom = server.getNextMailItem(user);
-            sendMailItem(userFrom.getFrom(), subject, autoMsg);
+            sendMailItem(item.getFrom(), subject, autoMsg);
         }
-        return server.getNextMailItem(user);
+        return item;
     }
 
     /**
@@ -50,11 +53,19 @@ public class MailClient
     public void printNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
-        if(item == null) {
+        lastMail = item;
+        if(item == null) 
+        {
             System.out.println("No new mail.");
         }
-        else {
-            item.print();
+        else if (sendAutoMsg && item != null)
+        {
+            sendMailItem(item.getFrom(), subject, autoMsg);            
+            getNextMailItem();
+        }
+        else if (sendAutoMsg == false && item != null)
+        {
+            item.print();            
         }
     }
 
@@ -72,17 +83,36 @@ public class MailClient
     
     public void numberOfMails()
     {
-        System.out.println(server.howManyMailItems(user));
+        System.out.println("Tiene" + " " + server.howManyMailItems(user) + " " + "mensajes sin leer");
     }
     
-    public void vacationMode(boolean setVacationMode)
+    public void vacationMode()
     {
-        sendAutoMsg = setVacationMode;
+        if (sendAutoMsg == true)
+        {
+            sendAutoMsg = false;
+        }
+        else
+        {
+            sendAutoMsg = true;
+        }
     }
     
     public void modifyAutoMsg(String newAutoMsg, String newSubject)
     {
         autoMsg = newAutoMsg;
         subject = newSubject;
+    }
+    
+    public void getLastMail()
+    {
+        if (lastMail == null)
+        {
+            System.out.println("No ha recibido ningún mensaje.");
+        }
+        else
+        {
+            lastMail.print();
+        }
     }
 }
